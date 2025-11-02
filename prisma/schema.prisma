@@ -1,27 +1,63 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
-model user {
-  id Int @id @default(autoincrement())
-  name String
-  lastname String
-  email String @unique
-  password String
-  descripcion String?
+model Clientes {
+  cliente_id     Int       @id @default(autoincrement())
+  nombre         String
+  email          String    @unique
+  telefono       String?
+  fecha_registro DateTime  @default(now())
+
+  // Relaciones
+  pedidos        Pedidos[]
 }
 
-model categoria{
-  id Int @id @default(autoincrement())
-  nombreCat String
-  descpCat String
+model Productos {
+  producto_id   Int       @id @default(autoincrement())
+  nombre        String
+  descripcion   String?
+  precio        Decimal
+  tematica_dino String?
+  // Relaciones
+  detalles      DetallesPedido[]
+  }
+
+model Pedidos {
+  pedido_id       Int       @id @default(autoincrement())
+  cliente_id      Int
+  fecha_pedido    DateTime  @default(now())
+  estado          String    @default("Pendiente")
+  total           Decimal
+  direccion_envio String
+  ciudad          String
+  codigo_postal   String?
+
+  // Relaciones
+  cliente  Clientes       @relation(fields: [cliente_id], references: [cliente_id], onDelete: Restrict)
+  detalles DetallesPedido[]
 }
+
+model DetallesPedido {
+  detalle_id     Int      @id @default(autoincrement())
+  pedido_id      Int
+  producto_id    Int
+  cantidad       Int
+  precio_unitario Decimal
+
+  // Relaciones
+  pedido   Pedidos   @relation(fields: [pedido_id], references: [pedido_id], onDelete: Cascade)
+  producto Productos @relation(fields: [producto_id], references: [producto_id], onDelete: Restrict)
+}
+
