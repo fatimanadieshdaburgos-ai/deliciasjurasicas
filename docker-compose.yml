@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: delicias-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: delicias_jurasicas
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # API (NestJS)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: delicias-api
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/delicias_jurasicas
+      JWT_SECRET: super-secret-change-in-production
+      JWT_EXPIRES_IN: 7d
+      PORT: 3000
+      NODE_ENV: production
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ./uploads:/app/uploads
+    command: sh -c "npx prisma migrate deploy && npx prisma db seed && npm run start:prod"
+
+  # Prisma Studio (opcional)
+  prisma-studio:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: delicias-studio
+    restart: unless-stopped
+    ports:
+      - "5555:5555"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/delicias_jurasicas
+    depends_on:
+      - postgres
+    command: npx prisma studio
+
+volumes:
+  postgres-data:
