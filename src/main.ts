@@ -9,10 +9,36 @@ async function bootstrap() {
     // Global prefix
     app.setGlobalPrefix('api/v1');
 
-    // CORS
+    // CORS - Configuración para producción
+    const allowedOrigins = [
+        'http://localhost:3000',
+        'http://localhost:5173', // Vite
+        'http://localhost:4200', // Angular
+        process.env.FRONTEND_URL, // URL de Vercel
+    ].filter(Boolean);
+
     app.enableCors({
-        origin: process.env.CORS_ORIGIN || '*',
+        origin: (origin, callback) => {
+            // Permitir requests sin origin (mobile apps, postman, etc)
+            if (!origin) return callback(null, true);
+
+            // En desarrollo, permitir todo
+            if (process.env.NODE_ENV === 'development') {
+                return callback(null, true);
+            }
+
+            // En producción, verificar lista blanca
+            if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+                return callback(null, true);
+            }
+
+            callback(new Error('Not allowed by CORS'));
+        },
         credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        exposedHeaders: ['Content-Range', 'X-Content-Range'],
+        maxAge: 3600,
     });
 
     // Global validation pipe
