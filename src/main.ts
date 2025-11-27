@@ -1,21 +1,99 @@
-// src/main.ts
-import 'reflect-metadata';
 import { NestFactory } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule);
 
-  const config = new DocumentBuilder()
-  .setTitle ('Delicias Jurásicas')
-  .setDescription ('Pastelería Temática')
-  .setVersion ('1.0')
-  .addTag ('Api Delicias')
-  .build();
-  
-  const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup("api", app, document)
-  await app.listen(process.env.PORT ?? 3000);
+    // Global prefix
+    app.setGlobalPrefix('api/v1');
+
+    // CORS - Configuración para producción
+    const allowedOrigins = [
+        'http://localhost:3000',
+        'http://localhost:5173', // Vite
+        'http://localhost:4200', // Angular
+        process.env.FRONTEND_URL, // URL de Vercel
+    ].filter(Boolean);
+
+    app.enableCors({
+        origin: (origin, callback) => {
+            // Permitir requests sin origin (mobile apps, postman, etc)
+            if (!origin) return callback(null, true);
+
+            // En desarrollo, permitir todo
+            if (process.env.NODE_ENV === 'development') {
+                return callback(null, true);
+            }
+
+            // En producción, verificar lista blanca
+            if (allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+                return callback(null, true);
+            }
+
+            callback(new Error('Not allowed by CORS'));
+        },
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+        exposedHeaders: ['Content-Range', 'X-Content-Range'],
+        maxAge: 3600,
+    });
+
+    // Global validation pipe
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            forbidNonWhitelisted: true,
+            transform: true,
+            transformOptions: {
+                enableImplicitConversion: true,
+            },
+        }),
+    );
+
+    // Swagger documentation
+    const config = new DocumentBuilder()
+        .setTitle('Delicias Jurásicas API')
+        .setDescription(
+            'API completa para sistema ERP + E-commerce de pastelería. ' +
+            'Incluye gestión de inventario, producción, ventas, entregas y tesorería.',
+        )
+        .setVersion('1.0')
+        .addBearerAuth()
+        .addTag('Auth', 'Autenticación y autorización')
+        .addTag('Users', 'Gestión de usuarios')
+        .addTag('Products', 'Catálogo de productos e insumos')
+        .addTag('Categories', 'Categorías de productos')
+        .addTag('Recipes', 'Recetas (Bill of Materials)')
+        .addTag('Production', 'Órdenes de producción')
+        .addTag('Inventory', 'Control de inventario')
+        .addTag('Promotions', 'Promociones y descuentos')
+        .addTag('Cart', 'Carrito de compras')
+        .addTag('Orders', 'Pedidos y ventas')
+        .addTag('Delivery', 'Entregas y logística')
+        .addTag('CashBox', 'Control de caja')
+        .addTag('Reports', 'Reportes y analytics')
+        .addTag('Settings', 'Configuración y CMS')
+        .build();
+
+    const document = SwaggerModule.createDocument(app, config);
+    SwaggerModule.setup('api/docs', app, document);
+
+    const port = process.env.PORT || 3000;
+    await app.listen(port);
+
+    console.log(`
+  ╔═══════════════════════════════════════════════════════╗
+  ║                                                       ║
+  ║     🦖 DELICIAS JURÁSICAS API 🍰                      ║
+  ║                                                       ║
+  ║     Server running on: http://localhost:${port}        ║
+  ║     API Documentation: http://localhost:${port}/api/docs  ║
+  ║                                                       ║
+  ╚═══════════════════════════════════════════════════════╝
+  `);
 }
+
 bootstrap();
