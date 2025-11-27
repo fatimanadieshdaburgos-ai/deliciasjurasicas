@@ -1,0 +1,45 @@
+# ============================================
+# RENDER BLUEPRINT - DELICIAS JURÁSICAS
+# Blueprint para deployment automático
+# ============================================
+
+services:
+  # Backend API (NestJS)
+  - type: web
+    name: delicias-jurasicas-api
+    runtime: node
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: npm install && npx prisma generate && npm run build
+    startCommand: npm run start:prod
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: DATABASE_URL
+        fromDatabase:
+          name: delicias-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: THROTTLE_TTL
+        value: 60
+      - key: THROTTLE_LIMIT
+        value: 100
+      - key: CHECKPOINT_DISABLE
+        value: true
+    healthCheckPath: /api/v1/products/featured
+    autoDeploy: true
+
+databases:
+  # PostgreSQL Database
+  - name: delicias-db
+    databaseName: delicias_jurasicas
+    user: delicias_user
+    region: oregon
+    plan: free
+    ipAllowList: []

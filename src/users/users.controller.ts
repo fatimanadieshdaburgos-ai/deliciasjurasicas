@@ -15,7 +15,8 @@ import { CreateUserDto, UpdateUserDto } from './dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '@prisma/client';
+import { GetUser } from '../auth/decorators/get-user.decorator';
+import { UserRole, User } from '@prisma/client';
 
 @ApiTags('Users')
 @Controller('users')
@@ -47,9 +48,15 @@ export class UsersController {
         return this.usersService.findOne(id);
     }
 
+    @Patch('profile')
+    @ApiOperation({ summary: 'Actualizar perfil propio' })
+    updateProfile(@GetUser() user: User, @Body() updateUserDto: UpdateUserDto) {
+        return this.usersService.update(user.id, updateUserDto);
+    }
+
     @Patch(':id')
     @Roles(UserRole.ADMIN)
-    @ApiOperation({ summary: 'Actualizar usuario' })
+    @ApiOperation({ summary: 'Actualizar usuario (Admin)' })
     update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
         return this.usersService.update(id, updateUserDto);
     }

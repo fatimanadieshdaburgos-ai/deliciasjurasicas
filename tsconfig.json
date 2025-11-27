@@ -28,5 +28,11 @@
                 "src/common/*"
             ]
         }
-    }
+    },
+    "exclude": [
+        "node_modules",
+        "dist",
+        "frontend",
+        "deliciasjurasicas"
+    ]
 }

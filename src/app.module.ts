@@ -16,6 +16,8 @@ import { DeliveryModule } from './delivery/delivery.module';
 import { CashBoxModule } from './cash-box/cash-box.module';
 import { ReportsModule } from './reports/reports.module';
 import { SettingsModule } from './settings/settings.module';
+import { AddressesModule } from './addresses/addresses.module';
+import { SuppliersModule } from './suppliers/suppliers.module';
 
 @Module({
     imports: [
@@ -47,10 +49,13 @@ import { SettingsModule } from './settings/settings.module';
         PromotionsModule,
         CartModule,
         OrdersModule,
+        OrdersModule,
         DeliveryModule,
         CashBoxModule,
         ReportsModule,
         SettingsModule,
+        AddressesModule,
+        SuppliersModule,
     ],
 })
 export class AppModule { }
