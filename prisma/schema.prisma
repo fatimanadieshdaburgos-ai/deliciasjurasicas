@@ -141,10 +141,32 @@ model Product {
   // Categoría
   categoryId      String?
   category        Category?     @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  // Proveedor
+  supplierId      String?
+  supplier        Supplier?     @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   
   @@index([type])
   @@index([isActive])
   @@map("products")
+}
+
+model Supplier {
+  id              String    @id @default(uuid())
+  name            String
+  contactName     String?
+  email           String?
+  phone           String?
+  address         String?
+  taxId           String?   // RUC/RFC
+  
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  products        Product[]
+  
+  @@map("suppliers")
 }
 
 model ProductImage {

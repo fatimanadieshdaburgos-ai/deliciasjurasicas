@@ -7,7 +7,10 @@ import {
     Archive,
     DollarSign,
     LogOut,
-    ChevronRight
+    ChevronRight,
+    Truck,
+    User,
+    BarChart3
 } from 'lucide-react';
 import { useAuthStore } from '@/store/authStore';
 
@@ -28,6 +31,9 @@ export default function DashboardSidebar() {
         { path: '/dashboard/production', icon: Factory, label: 'Producción', roles: ['ADMIN', 'PANADERO'] },
         { path: '/dashboard/inventory', icon: Archive, label: 'Inventario', roles: ['ADMIN', 'PANADERO'] },
         { path: '/dashboard/cash-box', icon: DollarSign, label: 'Caja', roles: ['ADMIN', 'VENDEDOR'] },
+        { path: '/dashboard/suppliers', icon: Truck, label: 'Proveedores', roles: ['ADMIN', 'PANADERO'] },
+        { path: '/dashboard/users', icon: User, label: 'Usuarios', roles: ['ADMIN'] },
+        { path: '/dashboard/reports', icon: BarChart3, label: 'Reportes', roles: ['ADMIN'] },
     ];
 
     const menuItems = allMenuItems.filter(item =>

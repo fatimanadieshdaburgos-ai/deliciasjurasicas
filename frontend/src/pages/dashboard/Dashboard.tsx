@@ -4,11 +4,11 @@ import {
     ShoppingBag,
     Factory,
     DollarSign,
-    AlertTriangle,
 } from 'lucide-react';
 import { productsApi } from '@/api/products';
 import { ordersApi } from '@/api/orders';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
+import LowStockAlert from '@/components/dashboard/LowStockAlert';
 
 export default function Dashboard() {
     const { data: products, isLoading: loadingProducts } = useQuery({
@@ -59,17 +59,17 @@ export default function Dashboard() {
             </h1>
 
             {/* Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
                 {stats.map((stat, index) => {
                     const Icon = stat.icon;
                     return (
-                        <div key={index} className="card">
+                        <div key={index} className="card hover:shadow-lg transition-shadow duration-200">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm text-gray-600 mb-1">{stat.label}</p>
+                                    <p className="text-sm font-medium text-gray-500 mb-1">{stat.label}</p>
                                     <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
                                 </div>
-                                <div className={`${stat.color} w-12 h-12 rounded-lg flex items-center justify-center`}>
+                                <div className={`${stat.color} w-12 h-12 rounded-xl flex items-center justify-center shadow-sm`}>
                                     <Icon className="w-6 h-6 text-white" />
                                 </div>
                             </div>
@@ -108,39 +108,7 @@ export default function Dashboard() {
                 </div>
 
                 {/* Low Stock Alert */}
-                <div className="card">
-                    <h2 className="text-xl font-semibold mb-4 flex items-center gap-2">
-                        <AlertTriangle className="w-5 h-5 text-warning" />
-                        Stock Bajo
-                    </h2>
-                    <div className="space-y-3">
-                        {products?.data && products.data.filter((p: any) => p.currentStock <= (p.minStock || 0)).length > 0 ? (
-                            products.data
-                                .filter((p: any) => p.currentStock <= (p.minStock || 0))
-                                .slice(0, 5)
-                                .map((product: any) => (
-                                    <div key={product.id} className="flex items-center justify-between py-2 border-b border-gray-100">
-                                        <div>
-                                            <p className="font-semibold text-sm">{product.name}</p>
-                                            <p className="text-xs text-gray-500">SKU: {product.sku}</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-sm font-semibold text-danger">
-                                                {product.currentStock} {product.measureUnit}
-                                            </p>
-                                            <p className="text-xs text-gray-500">
-                                                Min: {product.minStock}
-                                            </p>
-                                        </div>
-                                    </div>
-                                ))
-                        ) : (
-                            <p className="text-gray-500 text-center py-4">
-                                Todos los productos tienen stock suficiente
-                            </p>
-                        )}
-                    </div>
-                </div>
+                <LowStockAlert />
             </div>
         </div>
     );

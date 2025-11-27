@@ -13,6 +13,7 @@ import Shop from '@/pages/shop/Shop'
 import ProductDetail from '@/pages/shop/ProductDetail'
 import Cart from '@/pages/shop/Cart'
 import Checkout from '@/pages/shop/Checkout'
+import Profile from '@/pages/shop/Profile'
 
 // Dashboard Pages
 import Dashboard from '@/pages/dashboard/Dashboard'
@@ -21,6 +22,9 @@ import Orders from '@/pages/dashboard/Orders'
 import Production from '@/pages/dashboard/Production'
 import Inventory from '@/pages/dashboard/Inventory'
 import CashBox from '@/pages/dashboard/CashBox'
+import Suppliers from '@/pages/dashboard/Suppliers'
+import Users from '@/pages/dashboard/Users'
+import Reports from '@/pages/dashboard/Reports'
 
 function App() {
     return (
@@ -35,6 +39,7 @@ function App() {
                     <Route path="/shop/:id" element={<ProductDetail />} />
                     <Route path="/cart" element={<Cart />} />
                     <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/profile" element={<Profile />} />
                 </Route>
 
                 {/* Protected Dashboard Routes */}
@@ -45,6 +50,9 @@ function App() {
                     <Route path="/dashboard/production" element={<Production />} />
                     <Route path="/dashboard/inventory" element={<Inventory />} />
                     <Route path="/dashboard/cash-box" element={<CashBox />} />
+                    <Route path="/dashboard/suppliers" element={<Suppliers />} />
+                    <Route path="/dashboard/users" element={<Users />} />
+                    <Route path="/dashboard/reports" element={<Reports />} />
                 </Route>
 
                 {/* 404 */}

@@ -66,12 +66,12 @@ export default function Navbar() {
                         {/* User Menu */}
                         {isAuthenticated ? (
                             <div className="flex items-center gap-3 pl-4 border-l border-gray-200">
-                                <div className="hidden md:flex flex-col items-end">
+                                <Link to="/profile" className="hidden md:flex flex-col items-end hover:opacity-80 transition-opacity">
                                     <span className="text-sm font-semibold text-gray-900">{user?.firstName}</span>
                                     <span className="text-[10px] font-bold text-primary-600 bg-primary-50 px-2 py-0.5 rounded-full uppercase tracking-wide">
                                         {user?.role}
                                     </span>
-                                </div>
+                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"

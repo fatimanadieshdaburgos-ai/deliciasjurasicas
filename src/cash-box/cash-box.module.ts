@@ -46,6 +46,27 @@ export class CashBoxService {
             include: { orders: true, transactions: true },
         });
     }
+
+    async getHistory(userId: string) {
+        return this.prisma.cashBox.findMany({
+            where: { userId, status: 'CLOSED' },
+            orderBy: { closedAt: 'desc' },
+            take: 10,
+        });
+    }
+
+    async addTransaction(cashBoxId: string, type: 'DEPOSIT' | 'WITHDRAWAL', amount: number, description: string) {
+        // Use TransactionType enum from Prisma if available, or string literal if mapped
+        // Checking schema: enum TransactionType { SALE, REFUND, EXPENSE, WITHDRAWAL, DEPOSIT, ADJUSTMENT }
+        return this.prisma.cashTransaction.create({
+            data: {
+                cashBoxId,
+                type: type as any, // Cast to any to avoid strict enum checks if import missing, but better to import
+                amount,
+                description,
+            },
+        });
+    }
 }
 
 @ApiTags('CashBox')
@@ -69,6 +90,16 @@ export class CashBoxController {
     @Get('active')
     getActive(@GetUser() user: User) {
         return this.service.getActive(user.id);
+    }
+
+    @Get('history')
+    getHistory(@GetUser() user: User) {
+        return this.service.getHistory(user.id);
+    }
+
+    @Post('transaction')
+    addTransaction(@Body() dto: any) {
+        return this.service.addTransaction(dto.cashBoxId, dto.type, dto.amount, dto.description);
     }
 }
 

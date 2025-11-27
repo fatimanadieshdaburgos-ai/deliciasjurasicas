@@ -16,6 +16,12 @@ export const productsApi = {
         return data;
     },
 
+    // Get low stock products
+    getLowStock: async (): Promise<Product[]> => {
+        const { data } = await apiClient.get<Product[]>('/products/low-stock');
+        return data;
+    },
+
     // Get single product
     getById: async (id: string): Promise<Product> => {
         const { data } = await apiClient.get<Product>(`/products/${id}`);

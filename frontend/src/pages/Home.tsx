@@ -122,6 +122,38 @@ export default function Home() {
                 </div>
             </section>
 
+            {/* Mission & Vision */}
+            <section className="py-24 bg-gray-900 text-white relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1626202378372-c26662283f9e?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-10"></div>
+                <div className="container mx-auto px-4 relative z-10">
+                    <div className="grid md:grid-cols-2 gap-16 items-center">
+                        <div className="space-y-8">
+                            <div>
+                                <h3 className="text-primary-400 font-bold tracking-wider uppercase mb-2">Nuestra Esencia</h3>
+                                <h2 className="text-4xl font-bold mb-6">Misión</h2>
+                                <p className="text-xl text-gray-300 leading-relaxed">
+                                    "Ofrecer experiencias gastronómicas únicas a través de la repostería temática de alta calidad, fusionando la creatividad con el sabor artesanal para deleitar a nuestros clientes en cada celebración."
+                                </p>
+                            </div>
+                            <div>
+                                <h2 className="text-4xl font-bold mb-6">Visión</h2>
+                                <p className="text-xl text-gray-300 leading-relaxed">
+                                    "Ser la pastelería temática líder en la región, reconocida por nuestra innovación, calidad y servicio excepcional, expandiendo nuestra huella jurásica a nuevos horizontes."
+                                </p>
+                            </div>
+                        </div>
+                        <div className="relative">
+                            <div className="absolute inset-0 bg-primary-500/20 blur-3xl rounded-full"></div>
+                            <img
+                                src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1989&auto=format&fit=crop"
+                                alt="Chef decorando pastel"
+                                className="relative rounded-2xl shadow-2xl transform md:rotate-3 hover:rotate-0 transition-all duration-500"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* Featured Products */}
             <section className="py-24 bg-gray-50">
                 <div className="container mx-auto px-4">

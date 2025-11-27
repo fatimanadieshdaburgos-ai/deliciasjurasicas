@@ -232,14 +232,15 @@ export class ProductsService {
     }
 
     async getLowStock() {
-        return this.prisma.product.findMany({
+        const products = await this.prisma.product.findMany({
             where: {
                 isActive: true,
-                currentStock: {
-                    lte: this.prisma.product.fields.minStock,
-                },
+                minStock: { not: null },
             },
-            orderBy: { currentStock: 'asc' },
         });
+
+        return products
+            .filter(p => p.currentStock <= (p.minStock || 0))
+            .sort((a, b) => a.currentStock - b.currentStock);
     }
 }
