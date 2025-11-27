@@ -24,11 +24,34 @@ export class ProductsService {
             );
         }
 
+        const { recipe, ...productData } = dto;
+
         return this.prisma.product.create({
-            data: dto,
+            data: {
+                ...productData,
+                recipe: recipe ? {
+                    create: {
+                        name: `Receta de ${productData.name}`,
+                        yieldQuantity: 1,
+                        yieldUnit: productData.measureUnit,
+                        ingredients: {
+                            create: recipe.ingredients.map(i => ({
+                                ingredientId: i.ingredientId,
+                                quantity: i.quantity,
+                                unit: i.unit,
+                            })),
+                        },
+                    },
+                } : undefined,
+            },
             include: {
                 category: true,
                 images: true,
+                recipe: {
+                    include: {
+                        ingredients: true
+                    }
+                }
             },
         });
     }
@@ -123,12 +146,59 @@ export class ProductsService {
             }
         }
 
+        const { recipe, ...productData } = dto;
+
+        // If recipe is provided, we need to handle it carefully
+        if (recipe) {
+            // First check if product has a recipe
+            const currentProduct = await this.findOne(id);
+
+            if (currentProduct.recipe) {
+                // Delete existing ingredients
+                await this.prisma.recipeIngredient.deleteMany({
+                    where: { recipeId: currentProduct.recipe.id }
+                });
+
+                // Add new ingredients
+                await this.prisma.recipeIngredient.createMany({
+                    data: recipe.ingredients.map(i => ({
+                        recipeId: currentProduct.recipe.id,
+                        ingredientId: i.ingredientId,
+                        quantity: i.quantity,
+                        unit: i.unit,
+                    }))
+                });
+            } else {
+                // Create new recipe
+                await this.prisma.recipe.create({
+                    data: {
+                        productId: id,
+                        name: `Receta de ${productData.name || currentProduct.name}`,
+                        yieldQuantity: 1,
+                        yieldUnit: productData.measureUnit || currentProduct.measureUnit,
+                        ingredients: {
+                            create: recipe.ingredients.map(i => ({
+                                ingredientId: i.ingredientId,
+                                quantity: i.quantity,
+                                unit: i.unit,
+                            })),
+                        }
+                    }
+                });
+            }
+        }
+
         return this.prisma.product.update({
             where: { id },
-            data: dto,
+            data: productData,
             include: {
                 category: true,
                 images: true,
+                recipe: {
+                    include: {
+                        ingredients: true
+                    }
+                }
             },
         });
     }
@@ -162,14 +232,15 @@ export class ProductsService {
     }
 
     async getLowStock() {
-        return this.prisma.product.findMany({
+        const products = await this.prisma.product.findMany({
             where: {
                 isActive: true,
-                currentStock: {
-                    lte: this.prisma.product.fields.minStock,
-                },
+                minStock: { not: null },
             },
-            orderBy: { currentStock: 'asc' },
         });
+
+        return products
+            .filter(p => p.currentStock <= (p.minStock || 0))
+            .sort((a, b) => a.currentStock - b.currentStock);
     }
 }
