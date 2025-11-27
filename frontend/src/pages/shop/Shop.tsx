@@ -4,10 +4,11 @@ import { productsApi } from '@/api/products';
 import { ProductType } from '@/types';
 import ProductCard from '@/components/shop/ProductCard';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-import { Search, Filter } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 export default function Shop() {
     const [search, setSearch] = useState('');
+    const [page, setPage] = useState(1);
     const { data, isLoading } = useQuery({
         queryKey: ['products', { search, page }],
         queryFn: () => productsApi.getAll({

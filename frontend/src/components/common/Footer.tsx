@@ -1,3 +1,5 @@
+import { Phone, Mail, MapPin } from 'lucide-react';
+
 export default function Footer() {
     return (
         <footer className="bg-gray-800 text-white mt-auto">
@@ -26,9 +28,18 @@ export default function Footer() {
                     <div>
                         <h3 className="text-lg font-semibold mb-4">Contacto</h3>
                         <ul className="space-y-2 text-sm text-gray-400">
-                            <li>📞 555-1234-5678</li>
-                            <li>📧 info@deliciasjurasicas.com</li>
-                            <li>📍 Av. Principal 123, CDMX</li>
+                            <li className="flex items-start gap-3">
+                                <Phone className="w-5 h-5 flex-shrink-0 text-primary" />
+                                <span>+505 86287166</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <Mail className="w-5 h-5 flex-shrink-0 text-primary" />
+                                <span>info@deliciasjurasicas.com</span>
+                            </li>
+                            <li className="flex items-start gap-3">
+                                <MapPin className="w-5 h-5 flex-shrink-0 text-primary" />
+                                <span>En el porche de la fatima</span>
+                            </li>
                         </ul>
                     </div>
                 </div>

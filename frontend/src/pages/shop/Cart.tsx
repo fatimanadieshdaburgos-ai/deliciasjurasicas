@@ -11,8 +11,7 @@ export default function Cart() {
             alert('El carrito está vacío');
             return;
         }
-        // TODO: Navigate to checkout page
-        alert('Funcionalidad de checkout en desarrollo. Total: $' + getTotal().toFixed(2));
+        navigate('/checkout');
     };
 
     if (items.length === 0) {

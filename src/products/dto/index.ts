@@ -3,6 +3,16 @@ import { ApiProperty } from '@nestjs/swagger';
 import { ProductType, MeasureUnit } from '@prisma/client';
 import { Type } from 'class-transformer';
 
+export class CreateRecipeDto {
+    @ApiProperty()
+    @IsOptional()
+    ingredients: {
+        ingredientId: string;
+        quantity: number;
+        unit: MeasureUnit;
+    }[];
+}
+
 export class CreateProductDto {
     @ApiProperty()
     @IsString()
@@ -69,7 +79,13 @@ export class CreateProductDto {
     @IsOptional()
     @IsString()
     categoryId?: string;
+
+    @ApiProperty({ required: false })
+    @IsOptional()
+    recipe?: CreateRecipeDto;
 }
+
+
 
 export class UpdateProductDto extends CreateProductDto { }
 

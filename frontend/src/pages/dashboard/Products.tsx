@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { productsApi } from '@/api/products';
-import { Plus, Edit, Trash2, Search, Package } from 'lucide-react';
+import { Plus, Edit, Trash2, Search, Package, RotateCcw } from 'lucide-react';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
 import ProductFormModal from '@/components/dashboard/ProductFormModal';
 
@@ -31,13 +31,25 @@ export default function Products() {
     };
 
     const handleDelete = async (id: string, name: string) => {
-        if (confirm(`¿Estás seguro de eliminar "${name}"?`)) {
+        if (confirm(`¿Estás seguro de desactivar "${name}"? El producto no aparecerá en la tienda ni en nuevas órdenes.`)) {
             try {
                 await productsApi.delete(id);
-                alert('Producto eliminado');
+                alert('Producto desactivado');
                 refetch();
             } catch (error) {
-                alert('Error al eliminar producto');
+                alert('Error al desactivar producto');
+            }
+        }
+    };
+
+    const handleRestore = async (id: string, name: string) => {
+        if (confirm(`¿Reactivar el producto "${name}"?`)) {
+            try {
+                await productsApi.update(id, { isActive: true });
+                alert('Producto reactivado');
+                refetch();
+            } catch (error) {
+                alert('Error al reactivar producto');
             }
         }
     };
@@ -110,7 +122,7 @@ export default function Products() {
                                         </td>
                                         <td className="py-4 px-6">
                                             <span className={`badge ${product.type === 'PRODUCTO_TERMINADO' ? 'badge-info' :
-                                                    product.type === 'INSUMO' ? 'badge-warning' : 'badge-secondary'
+                                                product.type === 'INSUMO' ? 'badge-warning' : 'badge-secondary'
                                                 }`}>
                                                 {product.type.replace('_', ' ')}
                                             </span>
@@ -142,13 +154,23 @@ export default function Products() {
                                                 >
                                                     <Edit className="w-4 h-4" />
                                                 </button>
-                                                <button
-                                                    onClick={() => handleDelete(product.id, product.name)}
-                                                    className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                                                    title="Eliminar"
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
+                                                {product.isActive ? (
+                                                    <button
+                                                        onClick={() => handleDelete(product.id, product.name)}
+                                                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                                        title="Desactivar (Soft Delete)"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleRestore(product.id, product.name)}
+                                                        className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition-colors"
+                                                        title="Reactivar"
+                                                    >
+                                                        <RotateCcw className="w-4 h-4" />
+                                                    </button>
+                                                )}
                                             </div>
                                         </td>
                                     </tr>

@@ -12,6 +12,7 @@ import Register from '@/pages/auth/Register'
 import Shop from '@/pages/shop/Shop'
 import ProductDetail from '@/pages/shop/ProductDetail'
 import Cart from '@/pages/shop/Cart'
+import Checkout from '@/pages/shop/Checkout'
 
 // Dashboard Pages
 import Dashboard from '@/pages/dashboard/Dashboard'
@@ -33,6 +34,7 @@ function App() {
                     <Route path="/shop" element={<Shop />} />
                     <Route path="/shop/:id" element={<ProductDetail />} />
                     <Route path="/cart" element={<Cart />} />
+                    <Route path="/checkout" element={<Checkout />} />
                 </Route>
 
                 {/* Protected Dashboard Routes */}

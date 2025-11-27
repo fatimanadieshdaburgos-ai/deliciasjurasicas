@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { inventoryApi } from '@/api/inventory';
 import { AlertTriangle, Package, TrendingDown, Layers, Wheat, Cookie } from 'lucide-react';
 import LoadingSpinner from '@/components/common/LoadingSpinner';
-import { ProductType } from '@/types';
+
 
 export default function Inventory() {
     const [showLowStock, setShowLowStock] = useState(false);
@@ -53,8 +53,8 @@ export default function Inventory() {
                 <button
                     onClick={() => setActiveTab('ALL')}
                     className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors ${activeTab === 'ALL'
-                            ? 'bg-gray-900 text-white shadow-lg'
-                            : 'bg-white text-gray-600 hover:bg-gray-100'
+                        ? 'bg-gray-900 text-white shadow-lg'
+                        : 'bg-white text-gray-600 hover:bg-gray-100'
                         }`}
                 >
                     <Layers className="w-4 h-4" />
@@ -63,8 +63,8 @@ export default function Inventory() {
                 <button
                     onClick={() => setActiveTab('INSUMO')}
                     className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors ${activeTab === 'INSUMO'
-                            ? 'bg-blue-600 text-white shadow-lg'
-                            : 'bg-white text-gray-600 hover:bg-gray-100'
+                        ? 'bg-blue-600 text-white shadow-lg'
+                        : 'bg-white text-gray-600 hover:bg-gray-100'
                         }`}
                 >
                     <Wheat className="w-4 h-4" />
@@ -73,8 +73,8 @@ export default function Inventory() {
                 <button
                     onClick={() => setActiveTab('PRODUCTO_TERMINADO')}
                     className={`px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors ${activeTab === 'PRODUCTO_TERMINADO'
-                            ? 'bg-primary-600 text-white shadow-lg'
-                            : 'bg-white text-gray-600 hover:bg-gray-100'
+                        ? 'bg-primary-600 text-white shadow-lg'
+                        : 'bg-white text-gray-600 hover:bg-gray-100'
                         }`}
                 >
                     <Cookie className="w-4 h-4" />

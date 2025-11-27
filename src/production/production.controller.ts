@@ -34,7 +34,7 @@ export class ProductionController {
     }
 
     @Patch('orders/:id/start')
-    @Roles(UserRole.PANADERO)
+    @Roles(UserRole.PANADERO, UserRole.ADMIN)
     @ApiOperation({ summary: 'Iniciar producción' })
     start(@Param('id') id: string, @GetUser() user: User) {
         return this.productionService.start(id, user.id);
