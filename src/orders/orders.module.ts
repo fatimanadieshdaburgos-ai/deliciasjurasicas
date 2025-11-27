@@ -134,26 +134,29 @@ export class OrdersService {
         if (status === OrderStatus.DELIVERED && order.status !== OrderStatus.DELIVERED && order.status !== OrderStatus.COMPLETED) {
             await this.prisma.$transaction(async (tx) => {
                 for (const item of order.items) {
+                    // Fetch current stock before updating
+                    const product = await tx.product.findUnique({
+                        where: { id: item.productId },
+                        select: { currentStock: true }
+                    });
+
+                    const previousStock = product.currentStock;
+                    const newStock = previousStock - item.quantity;
+
                     // 1. Deduct stock
                     await tx.product.update({
                         where: { id: item.productId },
-                        data: { currentStock: { decrement: item.quantity } },
+                        data: { currentStock: newStock },
                     });
 
-                    // 2. Record movement
+                    // 2. Record movement with actual stock values
                     await tx.stockMovement.create({
                         data: {
                             productId: item.productId,
                             type: 'VENTA',
                             quantity: -item.quantity,
-                            previousStock: 0, // We'd need to fetch current stock to be accurate, but decrement handles the value. 
-                            // For the log, we might want the snapshot. 
-                            // For simplicity in this transaction, we might skip exact snapshot or fetch it.
-                            // Let's fetch it for accuracy if possible, or just log the change.
-                            // Since we are inside a transaction, we can't easily get the "before" value without another query.
-                            // Let's just put 0 for now or improve if strict tracking needed.
-                            // Actually, let's do it right.
-                            newStock: 0,      // Same here.
+                            previousStock,
+                            newStock,
                             orderId: order.id,
                             notes: `Venta Online/POS - Orden #${order.orderNumber}`,
                         }
